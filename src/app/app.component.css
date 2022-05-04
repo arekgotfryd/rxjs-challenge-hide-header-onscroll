@@ -1,0 +1,10 @@
+header {
+  position: sticky;
+  top: 8px;
+  transition: transform 0.3s;
+}
+
+.hidden {
+  transform: translate3d(0, -100%, 0) translateY(-20px);
+  transition: transform 0.3s 0.5s;
+}
