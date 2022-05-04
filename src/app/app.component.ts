@@ -17,6 +17,7 @@ export class AppComponent {
       }),
       pairwise(),
       map(([prev, next]) => {
+        //if distance from top is bigger then user is scrolling down
         return next > prev;
       }),
       distinctUntilChanged(),
