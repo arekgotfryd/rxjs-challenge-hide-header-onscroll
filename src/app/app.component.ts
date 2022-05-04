@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { fromEvent, of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, pairwise, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'my-app',
@@ -11,15 +11,17 @@ import { filter, map, switchMap } from 'rxjs/operators';
 export class AppComponent {
   className$;
   constructor(@Inject(DOCUMENT) private document: Document) {
-    this.className$ = fromEvent(this.document, 'wheel').pipe(
-      map((event) => {
-        return event['wheelDeltaY'];
+    this.className$ = fromEvent(this.document, 'scroll').pipe(
+      map(() => {
+        return this.document.documentElement.scrollTop;
       }),
-      filter((event) => {
-        return Number.isInteger(event);
+      pairwise(),
+      map(([prev, next]) => {
+        return next > prev;
       }),
-      switchMap((wheelDelta) => {
-        return wheelDelta > 0 ? of('') : of('hidden');
+      distinctUntilChanged(),
+      switchMap((isDistanceBigger: boolean) => {
+        return isDistanceBigger ? of('hidden') : of('');
       })
     );
   }
